@@ -32,7 +32,7 @@ namespace LongoMatch.Services.ViewModel
 	/// </summary>
 	public class PlayEditorVM : ViewModelBase, ILMTeamTaggerDealer, IProjectDealer
 	{
-		LMTimelineEvent play;
+		LMTimelineEventVM playVM;
 		LMProjectVM project;
 
 		public PlayEditorVM ()
@@ -61,13 +61,13 @@ namespace LongoMatch.Services.ViewModel
 		/// Gets or sets the timeline event.
 		/// </summary>
 		/// <value>The timeline event.</value>
-		public LMTimelineEvent Play {
+		public LMTimelineEventVM PlayVM {
 			get {
-				return play;
+				return playVM;
 			}
 
 			set {
-				play = value;
+				playVM = value;
 				UpdateTeamTagger ();
 			}
 		}
@@ -99,31 +99,31 @@ namespace LongoMatch.Services.ViewModel
 
 		void UpdateTeamTagger ()
 		{
-			if (Play == null) {
+			if (PlayVM == null) {
 				return;
 			}
 			TeamTagger.HomeTeam.Selection.Clear ();
 			TeamTagger.AwayTeam.Selection.Clear ();
 			foreach (var player in TeamTagger.HomeTeam) {
-				if (Play.Players.Contains (player.Model)) {
+				if (PlayVM.Players.Contains (player.Model)) {
 					player.Tagged = true;
 					TeamTagger.HomeTeam.Selection.Add (player);
 				}
 			}
 			foreach (var player in TeamTagger.AwayTeam) {
-				if (Play.Players.Contains (player.Model)) {
+				if (PlayVM.Players.Contains (player.Model)) {
 					player.Tagged = true;
 					TeamTagger.AwayTeam.Selection.Add (player);
 				}
 			}
-			foreach (var team in Play.Teams) {
+			foreach (var team in PlayVM.Teams) {
 				if (team == TeamTagger.HomeTeam.Model) {
 					TeamTagger.HomeTeam.Tagged = true;
 				} else if (team == TeamTagger.AwayTeam.Model) {
 					TeamTagger.AwayTeam.Tagged = true;
 				}
 			}
-			TeamTagger.CurrentTime = Play.EventTime;
+			TeamTagger.CurrentTime = PlayVM.EventTime;
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace LongoMatch.Services.State
 		{
 			ViewModel = new LMDrawingToolVM ();
 			ViewModel.Project = data.project;
-			ViewModel.TimelineEvent = data.timelineEvent;
+			ViewModel.TimelineEventVM = data.timelineEvent;
 			ViewModel.Frame = data.frame;
 			ViewModel.Drawing = data.drawing;
 			ViewModel.CameraConfig = data.cameraconfig;

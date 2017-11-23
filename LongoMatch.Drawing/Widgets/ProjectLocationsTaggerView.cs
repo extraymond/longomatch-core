@@ -127,7 +127,7 @@ namespace LongoMatch.Drawing.Widgets
 				LMTimelineEventVM p = (selections.Last ().Drawable as TimelineEventLocationView).ViewModel;
 				if (EmitSignals) {
 					// FIXME: Use a ViewModel command
-					App.Current.EventsBroker.Publish (new LoadEventEvent { TimelineEvent = p.Model });
+					App.Current.EventsBroker.Publish (new LoadEventEvent { TimelineEvent = p });
 				}
 			}
 		}

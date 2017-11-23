@@ -34,6 +34,7 @@ using VAS.Core.Hotkeys;
 using VAS.Core.Interfaces.MVVMC;
 using VAS.Core.MVVMC;
 using VAS.Core.Store;
+using VAS.Core.ViewModel;
 using VAS.Services.Controller;
 using KeyAction = VAS.Core.Hotkeys.KeyAction;
 
@@ -50,14 +51,14 @@ namespace LongoMatch.Services
 		public override async Task Start ()
 		{
 			await base.Start ();
-			App.Current.EventsBroker.Subscribe<LoadTimelineEventEvent<TimelineEvent>> (HandleLoadTimelineEvent);
+			App.Current.EventsBroker.Subscribe<LoadTimelineEventEvent<TimelineEventVM>> (HandleLoadTimelineEvent);
 			App.Current.EventsBroker.Subscribe<PlayerSubstitutionEvent> (HandlePlayerSubstitutionEvent);
 			App.Current.EventsBroker.Subscribe<ShowProjectStatsEvent> (HandleShowProjectStatsEvent);
 		}
 
 		public override async Task Stop ()
 		{
-			App.Current.EventsBroker.Unsubscribe<LoadTimelineEventEvent<TimelineEvent>> (HandleLoadTimelineEvent);
+			App.Current.EventsBroker.Unsubscribe<LoadTimelineEventEvent<TimelineEventVM>> (HandleLoadTimelineEvent);
 			App.Current.EventsBroker.Unsubscribe<PlayerSubstitutionEvent> (HandlePlayerSubstitutionEvent);
 			App.Current.EventsBroker.Unsubscribe<ShowProjectStatsEvent> (HandleShowProjectStatsEvent);
 			await base.Stop ();
@@ -78,7 +79,7 @@ namespace LongoMatch.Services
 		}
 
 		// FIXME: remove this when the video capturer is ported to MVVM
-		void HandleLoadTimelineEvent (LoadTimelineEventEvent<TimelineEvent> e)
+		void HandleLoadTimelineEvent (LoadTimelineEventEvent<TimelineEventVM> e)
 		{
 			VideoPlayer.LoadEvent (e.Object, e.Playing);
 		}
@@ -94,7 +95,7 @@ namespace LongoMatch.Services
 				evt = viewModel.Project.Model.SubsitutePlayer (e.Team, e.Player1, e.Player2, e.SubstitutionReason, e.Time);
 				App.Current.EventsBroker.Publish (
 					new EventCreatedEvent {
-						TimelineEvent = evt
+						TimelineEvent = new TimelineEventVM () { Model = evt }
 					}
 				);
 			} catch (SubstitutionException ex) {
@@ -109,25 +110,25 @@ namespace LongoMatch.Services
 
 		void DeleteLoadedEvent ()
 		{
-			if (LoadedPlay == null) {
+			if (LoadedPlayVM?.Model == null) {
 				return;
 			}
 			App.Current.EventsBroker.Publish (
 				new EventsDeletedEvent {
-					TimelineEvents = new List<TimelineEvent> { LoadedPlay }
+					TimelineEventVMs = new List<TimelineEventVM> { LoadedPlayVM }
 				}
 			);
 		}
 
 		void EditLoadedEvent ()
 		{
-			if (LoadedPlay == null) {
+			if (LoadedPlayVM?.Model == null) {
 				return;
 			}
 			bool playing = VideoPlayer.Playing;
 			VideoPlayer.PauseCommand.Execute (false);
 
-			App.Current.EventsBroker.Publish (new EditEventEvent { TimelineEvent = LoadedPlay });
+			App.Current.EventsBroker.Publish (new EditEventEvent { TimelineEvent = LoadedPlayVM });
 
 			if (playing) {
 				VideoPlayer.PlayCommand.Execute ();

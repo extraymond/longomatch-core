@@ -147,14 +147,16 @@ namespace LongoMatch.Gui.Component
 		protected override void ShowMenu ()
 		{
 			IEnumerable<IViewModel> viewModels = GetSelectedViewModels ();
-			IEnumerable<TimelineEventVM> events = viewModels.OfType<TimelineEventVM> ();
+			IEnumerable<TimelineEventVM> eventVMs = viewModels.OfType<TimelineEventVM> ();
 
 			EventTypeTimelineVM categoryVM = viewModels.OfType<EventTypeTimelineVM> ().FirstOrDefault ();
-			if (!events.Any () && categoryVM != null) {
-				events = categoryVM.ViewModels.Where (vm => vm.Visible);
-				eventTypeMenu.ShowMenu (Project.Model, categoryVM.Model, events.Select (vm => vm.Model as LMTimelineEvent).ToList ());
+
+			if (!eventVMs.Any () && categoryVM != null) {
+				eventVMs = categoryVM.ViewModels.Where (vm => vm.Visible);
+				eventTypeMenu.ShowMenu (Project.Model, categoryVM.Model,
+										eventVMs.Select (vm => vm as LMTimelineEventVM));
 			} else {
-				menu.ShowMenu (Project.Model, events.Select (vm => vm.Model).ToList ());
+				menu.ShowMenu (Project.Model, eventVMs);
 			}
 		}
 

@@ -55,25 +55,28 @@ namespace LongoMatch.Services.Controller
 		async Task HandleEditEvent (EditEventEvent e)
 		{
 			PlayEventEditionSettings settings = new PlayEventEditionSettings () {
-				EditTags = true, EditNotes = true, EditPlayers = true, EditPositions = true
+				EditTags = true,
+				EditNotes = true,
+				EditPlayers = true,
+				EditPositions = true
 			};
 
 			await ShowEditionView (settings, e);
 
 			await App.Current.EventsBroker.Publish (
 				new EventEditedEvent {
-					TimelineEvent = e.TimelineEvent
+					TimelineEventVM = e.TimelineEvent
 				}
 			);
 		}
 
-		protected virtual async Task ShowEditionView(PlayEventEditionSettings settings, EditEventEvent ev)
+		protected virtual async Task ShowEditionView (PlayEventEditionSettings settings, EditEventEvent ev)
 		{
 			dynamic properties = new ExpandoObject ();
 			properties.project = ViewModel;
-			properties.play = ev.TimelineEvent;
+			properties.playVM = ev.TimelineEvent;
 
-			if (ev.TimelineEvent is StatEvent) {
+			if (ev.TimelineEvent.Model is StatEvent) {
 				await App.Current.StateController.MoveToModal (SubstitutionsEditorState.NAME, properties, true);
 			} else {
 				properties.settings = settings;

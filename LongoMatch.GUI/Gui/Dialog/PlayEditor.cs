@@ -92,30 +92,30 @@ namespace LongoMatch.Gui.Dialog
 			// FIXME: change to bindings
 			notesframe.Visible = editorVM.EditionSettings.EditNotes;
 			locationsBox.Visible = editorVM.EditionSettings.EditPositions &&
-				(editorVM.Play.EventType.TagFieldPosition ||
-				editorVM.Play.EventType.TagHalfFieldPosition ||
-				editorVM.Play.EventType.TagGoalPosition);
+				(editorVM.PlayVM.EventType.TagFieldPosition ||
+				editorVM.PlayVM.EventType.TagHalfFieldPosition ||
+				editorVM.PlayVM.EventType.TagGoalPosition);
 			drawingarea3.Visible = editorVM.EditionSettings.EditPlayers;
 			nameframe.Visible = editorVM.EditionSettings.EditTags;
 			tagsvbox.Visible = editorVM.EditionSettings.EditTags;
 
-			nameentry.Text = editorVM.Play.Name;
+			nameentry.Text = editorVM.PlayVM.Name;
 			nameentry.GrabFocus ();
 
 			if (editorVM.EditionSettings.EditPositions) {
 				LoadBackgrounds (editorVM.Project.Model);
-				LoadTimelineEvent (editorVM.Play);
+				LoadTimelineEvent (editorVM.PlayVM);
 			}
 
 			if (editorVM.EditionSettings.EditNotes) {
-				notes.Play = editorVM.Play;
+				notes.PlayVM = editorVM.PlayVM;
 			}
 			if (editorVM.EditionSettings.EditPlayers) {
 				teamtagger.ViewModel = editorVM.TeamTagger;
 			}
 
 			if (editorVM.EditionSettings.EditTags) {
-				FillTags (editorVM.Project.Model, editorVM.Play);
+				FillTags (editorVM.Project.Model, editorVM.PlayVM);
 			}
 		}
 
@@ -156,18 +156,18 @@ namespace LongoMatch.Gui.Dialog
 			goal.Background = project.GetBackground (FieldPositionType.Goal);
 		}
 
-		void LoadTimelineEvent (LMTimelineEvent timelineEvent)
+		void LoadTimelineEvent (LMTimelineEventVM eventVM)
 		{
-			var viewModel = new LMTimelineEventVM { Model = timelineEvent };
-			fieldDrawingarea.Visible = timelineEvent.EventType.TagFieldPosition;
-			hfieldDrawingarea.Visible = timelineEvent.EventType.TagHalfFieldPosition;
-			goalDrawingarea.Visible = timelineEvent.EventType.TagGoalPosition;
+			var viewModel = eventVM;
+			fieldDrawingarea.Visible = eventVM.EventType.TagFieldPosition;
+			hfieldDrawingarea.Visible = eventVM.EventType.TagHalfFieldPosition;
+			goalDrawingarea.Visible = eventVM.EventType.TagGoalPosition;
 			field.SetViewModel (viewModel);
 			hfield.SetViewModel (viewModel);
 			goal.SetViewModel (viewModel);
 		}
 
-		void AddTagsGroup (LMTimelineEvent evt, string grp, List<Tag> tags, SizeGroup sgroup)
+		void AddTagsGroup (LMTimelineEventVM eventVM, string grp, List<Tag> tags, SizeGroup sgroup)
 		{
 			HBox box = new HBox ();
 			Label label = new Label (String.IsNullOrEmpty (grp) ? Catalog.GetString ("Common tags") : grp);
@@ -191,12 +191,12 @@ namespace LongoMatch.Gui.Dialog
 						tb = new RadioButton (first, t.Value);
 					}
 				}
-				tb.Active = evt.Tags.Contains (t);
+				tb.Active = eventVM.Tags.Contains (t);
 				tb.Toggled += (sender, e) => {
 					if (tb.Active && t != noneTag) {
-						evt.Tags.Add (t);
+						eventVM.Tags.Add (t);
 					} else {
-						evt.Tags.Remove (t);
+						eventVM.Tags.Remove (t);
 					}
 				};
 				row_top = (uint)(i / tagstable.NColumns);
@@ -213,31 +213,31 @@ namespace LongoMatch.Gui.Dialog
 			tagsvbox.PackStart (new HSeparator ());
 		}
 
-		void FillTags (LMProject project, LMTimelineEvent evt)
+		void FillTags (LMProject project, LMTimelineEventVM eventVM)
 		{
 			Dictionary<string, List<Tag>> tagsByGroup;
 			SizeGroup sgroup = new SizeGroup (SizeGroupMode.Horizontal);
 
-			if (evt.EventType is AnalysisEventType) {
-				tagsByGroup = (evt.EventType as AnalysisEventType).TagsByGroup;
+			if (eventVM.EventType is AnalysisEventType) {
+				tagsByGroup = (eventVM.EventType as AnalysisEventType).TagsByGroup;
 			} else {
 				tagsByGroup = new Dictionary<string, List<Tag>> ();
 			}
 
 			tagsvbox.PackStart (new HSeparator ());
 			foreach (var kv in project.Dashboard.CommonTagsByGroup) {
-				AddTagsGroup (evt, kv.Key, kv.Value, sgroup);
+				AddTagsGroup (eventVM, kv.Key, kv.Value, sgroup);
 			}
 			foreach (var kv in tagsByGroup) {
-				AddTagsGroup (evt, kv.Key, kv.Value, sgroup);
+				AddTagsGroup (eventVM, kv.Key, kv.Value, sgroup);
 			}
 			tagsvbox.ShowAll ();
 		}
 
 		void HandleChanged (object sender, EventArgs e)
 		{
-			if (editorVM.Play != null) {
-				editorVM.Play.Name = nameentry.Text;
+			if (editorVM.PlayVM != null) {
+				editorVM.PlayVM.Name = nameentry.Text;
 			}
 		}
 	}

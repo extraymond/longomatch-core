@@ -397,14 +397,14 @@ namespace LongoMatch.Services.Controller
 
 		void HandleEventsDeletedEvent (EventsDeletedEvent e)
 		{
-			if (e.TimelineEvents.Count (s => s is SubstitutionEvent) != 0) {
+			if (e.TimelineEventVMs.Count (s => s.Model is SubstitutionEvent) != 0) {
 				UpdatePlayersPosition ();
 			}
 		}
 
 		void HandleEventEdited (EventEditedEvent e)
 		{
-			if (e.TimelineEvent is SubstitutionEvent || e.TimelineEvent is LineupEvent) {
+			if (e.TimelineEventVM.Model is SubstitutionEvent || e.TimelineEventVM.Model is LineupEvent) {
 				UpdatePlayersPosition ();
 			}
 		}
