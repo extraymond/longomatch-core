@@ -33,7 +33,7 @@ namespace LongoMatch.Gui.Component
 	public partial class NotesWidget : Gtk.Bin
 	{
 		TextBuffer buf;
-		LMTimelineEventVM playVM;
+		LMTimelineEventVM play;
 
 		public NotesWidget ()
 		{
@@ -51,8 +51,8 @@ namespace LongoMatch.Gui.Component
 
 		public LMTimelineEventVM PlayVM {
 			set {
-				playVM = value;
-				Notes = playVM.Notes;
+				play = value;
+				Notes = play.Notes;
 			}
 		}
 
@@ -68,8 +68,8 @@ namespace LongoMatch.Gui.Component
 
 		protected virtual void OnEdition (object sender, EventArgs args)
 		{
-			if (playVM != null) {
-				playVM.Notes = Notes;
+			if (play != null) {
+				play.Notes = Notes;
 			}
 		}
 

@@ -38,17 +38,17 @@ namespace LongoMatch.Gui.Menus
 			Popup ();
 		}
 
-		public override void ShowMenu (Project project, IEnumerable<TimelineEventVM> playVMs)
+		public override void ShowMenu (Project project, IEnumerable<TimelineEventVM> plays)
 		{
-			ShowMenu (project, playVMs, null, null, project.EventTypes, true);
+			ShowMenu (project, plays, null, null, project.EventTypes, true);
 		}
 
-		protected override void PrepareMenu (Project project, IEnumerable<TimelineEventVM> playVMs, EventType eventType, Time time,
+		protected override void PrepareMenu (Project project, IEnumerable<TimelineEventVM> plays, EventType eventType, Time time,
 										 IList<EventType> eventTypes, bool editableName)
 		{
 			bool isLineup = false, isSubstitution = false;
 
-			this.playVMs = playVMs.ToList ();
+			this.plays = plays.ToList ();
 			this.eventType = eventType;
 			this.time = time;
 			this.project = project;
@@ -61,14 +61,14 @@ namespace LongoMatch.Gui.Menus
 				newPlay.Visible = false;
 			}
 
-			if (playVMs == null) {
-				playVMs = new List<TimelineEventVM> ();
-			} else if (playVMs.Count () == 1) {
-				isLineup = playVMs.FirstOrDefault ().Model is LineupEvent;
-				isSubstitution = playVMs.FirstOrDefault ().Model is SubstitutionEvent;
+			if (plays == null) {
+				plays = new List<TimelineEventVM> ();
+			} else if (plays.Count () == 1) {
+				isLineup = plays.FirstOrDefault ().Model is LineupEvent;
+				isSubstitution = plays.FirstOrDefault ().Model is SubstitutionEvent;
 			}
 
-			MenuHelpers.FillExportToVideoFileMenu (render, project, playVMs, Catalog.GetString ("Export to video file"));
+			MenuHelpers.FillExportToVideoFileMenu (render, project, plays, Catalog.GetString ("Export to video file"));
 
 			if (isLineup || isSubstitution) {
 				edit.Visible = true;
@@ -76,30 +76,30 @@ namespace LongoMatch.Gui.Menus
 				snapshot.Visible = moveCat.Visible = drawings.Visible =
 					addPLN.Visible = render.Visible = duplicate.Visible = false;
 			} else {
-				edit.Visible = editableName && this.playVMs.Count == 1;
-				snapshot.Visible = this.playVMs.Count == 1;
-				drawings.Visible = this.playVMs.Count == 1 && this.playVMs.FirstOrDefault ().Drawings.Count > 0;
-				moveCat.Visible = del.Visible = addPLN.Visible = duplicate.Visible = this.playVMs.Any ();
+				edit.Visible = editableName && this.plays.Count == 1;
+				snapshot.Visible = this.plays.Count == 1;
+				drawings.Visible = this.plays.Count == 1 && this.plays.FirstOrDefault ().Drawings.Count > 0;
+				moveCat.Visible = del.Visible = addPLN.Visible = duplicate.Visible = this.plays.Any ();
 			}
 
-			if (playVMs.Count () > 0) {
-				string label = String.Format ("{0} ({1})", Catalog.GetString ("Delete"), playVMs.Count ());
+			if (plays.Count () > 0) {
+				string label = String.Format ("{0} ({1})", Catalog.GetString ("Delete"), plays.Count ());
 				del.SetLabel (label);
-				label = String.Format ("{0} ({1})", Catalog.GetString ("Duplicate "), playVMs.Count ());
+				label = String.Format ("{0} ({1})", Catalog.GetString ("Duplicate "), plays.Count ());
 				duplicate.SetLabel (label);
 			}
 
 			if (moveCat.Visible) {
 				Menu catMenu = new Menu ();
 				foreach (EventType c in eventTypes) {
-					if (playVMs.Any (p => p.EventType == c))
+					if (plays.Any (p => p.EventType == c))
 						continue;
 					var item = new MenuItem (c.Name);
 					catMenu.Append (item);
 					item.Activated += (sender, e) => {
 						App.Current.EventsBroker.Publish<MoveToEventTypeEvent> (
 							new MoveToEventTypeEvent {
-								TimelineEventVMs = playVMs.ToList (),
+								TimelineEvents = plays.ToList (),
 								EventType = c
 							}
 						);
@@ -111,7 +111,7 @@ namespace LongoMatch.Gui.Menus
 
 			if (drawings.Visible) {
 				Menu drawingsMenu = new Menu ();
-				for (int i = 0; i < playVMs.FirstOrDefault ().Drawings.Count; i++) {
+				for (int i = 0; i < plays.FirstOrDefault ().Drawings.Count; i++) {
 					int index = i;
 					MenuItem drawingItem = new MenuItem (Catalog.GetString ("Drawing ") + (i + 1));
 					MenuItem editItem = new MenuItem (Catalog.GetString ("Edit"));
@@ -122,18 +122,18 @@ namespace LongoMatch.Gui.Menus
 					drawingMenu.Append (editItem);
 					drawingMenu.Append (deleteItem);
 					editItem.Activated += (sender, e) => {
-						var playVM = playVMs.FirstOrDefault ();
+						var play = plays.FirstOrDefault ();
 						App.Current.EventsBroker.Publish (
 							new DrawFrameEvent {
-								Play = playVM,
+								Play = play,
 								DrawingIndex = index,
-								CamConfig = playVM.Drawings [index].CameraConfig,
+								CamConfig = play.Drawings [index].CameraConfig,
 							}
 						);
 					};
 					deleteItem.Activated += (sender, e) => {
-						playVMs.FirstOrDefault ().Drawings.RemoveAt (index);
-						playVMs.FirstOrDefault ().Model.UpdateMiniature ();
+						plays.FirstOrDefault ().Drawings.RemoveAt (index);
+						plays.FirstOrDefault ().Model.UpdateMiniature ();
 					};
 					drawingItem.Submenu = drawingMenu;
 					drawingMenu.ShowAll ();
@@ -144,7 +144,7 @@ namespace LongoMatch.Gui.Menus
 
 			if (!IsLineupEvent ()) {
 				var playlistVMs = project.Playlists.Select (pl => new PlaylistVM { Model = pl });
-				MenuHelpers.FillAddToPlaylistMenu (addPLN, playlistVMs, this.playVMs);
+				MenuHelpers.FillAddToPlaylistMenu (addPLN, playlistVMs, this.plays);
 			}
 		}
 
@@ -156,7 +156,7 @@ namespace LongoMatch.Gui.Menus
 			edit.Activated += (sender, e) => {
 				App.Current.EventsBroker.Publish (
 				new EditEventEvent {
-					TimelineEvent = playVMs.Single ()
+					TimelineEvent = plays.Single ()
 				});
 			};
 			Add (edit);
@@ -164,7 +164,7 @@ namespace LongoMatch.Gui.Menus
 			duplicate = new MenuItem ("");
 			duplicate.Activated += (sender, e) => App.Current.EventsBroker.Publish<DuplicateEventsEvent> (
 				new DuplicateEventsEvent {
-					TimelineEvents = playVMs
+					TimelineEvents = plays
 				}
 			);
 			Add (duplicate);
@@ -179,13 +179,13 @@ namespace LongoMatch.Gui.Menus
 			Add (addPLN);
 
 			render = new MenuItem ("");
-			render.Activated += (sender, e) => MenuHelpers.EmitRenderPlaylist (playVMs);
+			render.Activated += (sender, e) => MenuHelpers.EmitRenderPlaylist (plays);
 			Add (render);
 
 			snapshot = new MenuItem (Catalog.GetString ("Export to PNG images"));
 			snapshot.Activated += (sender, e) => App.Current.EventsBroker.Publish<SnapshotSeriesEvent> (
 				new SnapshotSeriesEvent {
-					TimelineEvent = playVMs.FirstOrDefault ()
+					TimelineEvent = plays.FirstOrDefault ()
 				}
 			);
 			Add (snapshot);
@@ -195,7 +195,7 @@ namespace LongoMatch.Gui.Menus
 
 		bool IsLineupEvent ()
 		{
-			return playVMs.Any (p => p.Model is LineupEvent || p.Model is SubstitutionEvent);
+			return plays.Any (p => p.Model is LineupEvent || p.Model is SubstitutionEvent);
 		}
 	}
 }

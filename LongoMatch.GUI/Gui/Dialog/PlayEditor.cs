@@ -92,30 +92,30 @@ namespace LongoMatch.Gui.Dialog
 			// FIXME: change to bindings
 			notesframe.Visible = editorVM.EditionSettings.EditNotes;
 			locationsBox.Visible = editorVM.EditionSettings.EditPositions &&
-				(editorVM.PlayVM.EventType.TagFieldPosition ||
-				editorVM.PlayVM.EventType.TagHalfFieldPosition ||
-				editorVM.PlayVM.EventType.TagGoalPosition);
+				(editorVM.Play.EventType.TagFieldPosition ||
+				editorVM.Play.EventType.TagHalfFieldPosition ||
+				editorVM.Play.EventType.TagGoalPosition);
 			drawingarea3.Visible = editorVM.EditionSettings.EditPlayers;
 			nameframe.Visible = editorVM.EditionSettings.EditTags;
 			tagsvbox.Visible = editorVM.EditionSettings.EditTags;
 
-			nameentry.Text = editorVM.PlayVM.Name;
+			nameentry.Text = editorVM.Play.Name;
 			nameentry.GrabFocus ();
 
 			if (editorVM.EditionSettings.EditPositions) {
 				LoadBackgrounds (editorVM.Project.Model);
-				LoadTimelineEvent (editorVM.PlayVM);
+				LoadTimelineEvent (editorVM.Play);
 			}
 
 			if (editorVM.EditionSettings.EditNotes) {
-				notes.PlayVM = editorVM.PlayVM;
+				notes.PlayVM = editorVM.Play;
 			}
 			if (editorVM.EditionSettings.EditPlayers) {
 				teamtagger.ViewModel = editorVM.TeamTagger;
 			}
 
 			if (editorVM.EditionSettings.EditTags) {
-				FillTags (editorVM.Project.Model, editorVM.PlayVM);
+				FillTags (editorVM.Project.Model, editorVM.Play);
 			}
 		}
 
@@ -236,8 +236,8 @@ namespace LongoMatch.Gui.Dialog
 
 		void HandleChanged (object sender, EventArgs e)
 		{
-			if (editorVM.PlayVM != null) {
-				editorVM.PlayVM.Name = nameentry.Text;
+			if (editorVM.Play != null) {
+				editorVM.Play.Name = nameentry.Text;
 			}
 		}
 	}

@@ -74,7 +74,7 @@ namespace LongoMatch.Services.Controller
 		{
 			dynamic properties = new ExpandoObject ();
 			properties.project = ViewModel;
-			properties.playVM = ev.TimelineEvent;
+			properties.play = ev.TimelineEvent;
 
 			if (ev.TimelineEvent.Model is StatEvent) {
 				await App.Current.StateController.MoveToModal (SubstitutionsEditorState.NAME, properties, true);

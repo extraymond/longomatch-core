@@ -397,7 +397,7 @@ namespace LongoMatch.Services.Controller
 
 		void HandleEventsDeletedEvent (EventsDeletedEvent e)
 		{
-			if (e.TimelineEventVMs.Count (s => s.Model is SubstitutionEvent) != 0) {
+			if (e.TimelineEvents.Count (s => s.Model is SubstitutionEvent) != 0) {
 				UpdatePlayersPosition ();
 			}
 		}

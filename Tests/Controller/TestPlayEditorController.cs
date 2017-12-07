@@ -46,7 +46,7 @@ namespace Tests.Controller
 			var play = project.Timeline [0] as LMTimelineEvent;
 			play.Players.Add (project.LocalTeamTemplate.List [0]);
 			play.Teams.Add (project.LocalTeamTemplate);
-			viewModel.PlayVM = new LMTimelineEventVM () { Model = play };
+			viewModel.Play = new LMTimelineEventVM () { Model = play };
 
 			controller.SetViewModel (viewModel);
 			teamTaggerController.SetViewModel (viewModel);
@@ -66,11 +66,11 @@ namespace Tests.Controller
 		{
 			var playerClicked = viewModel.TeamTagger.HomeTeam.FieldPlayersList.ElementAt (2);
 
-			Assert.IsFalse (viewModel.PlayVM.Players.Contains (playerClicked.Model));
+			Assert.IsFalse (viewModel.Play.Players.Contains (playerClicked.Model));
 
 			viewModel.TeamTagger.PlayerClick (playerClicked, ButtonModifier.None);
 
-			Assert.IsTrue (viewModel.PlayVM.Players.Contains (playerClicked.Model));
+			Assert.IsTrue (viewModel.Play.Players.Contains (playerClicked.Model));
 		}
 
 		[Test]
@@ -78,11 +78,11 @@ namespace Tests.Controller
 		{
 			var playerClicked = viewModel.TeamTagger.AwayTeam.FieldPlayersList.ElementAt (2);
 
-			Assert.IsFalse (viewModel.PlayVM.Players.Contains (playerClicked.Model));
+			Assert.IsFalse (viewModel.Play.Players.Contains (playerClicked.Model));
 
 			viewModel.TeamTagger.PlayerClick (playerClicked, ButtonModifier.None);
 
-			Assert.IsTrue (viewModel.PlayVM.Players.Contains (playerClicked.Model));
+			Assert.IsTrue (viewModel.Play.Players.Contains (playerClicked.Model));
 		}
 
 		[Test]
@@ -90,33 +90,33 @@ namespace Tests.Controller
 		{
 			var playerClicked = viewModel.TeamTagger.HomeTeam.FieldPlayersList.ElementAt (0);
 
-			Assert.IsTrue (viewModel.PlayVM.Players.Contains (playerClicked.Model));
+			Assert.IsTrue (viewModel.Play.Players.Contains (playerClicked.Model));
 
 			viewModel.TeamTagger.PlayerClick (playerClicked, ButtonModifier.None);
 
-			Assert.IsFalse (viewModel.PlayVM.Players.Contains (playerClicked.Model));
+			Assert.IsFalse (viewModel.Play.Players.Contains (playerClicked.Model));
 		}
 
 		[Test]
 		public void TestClickTeamAddsToEvent ()
 		{
-			Assert.IsFalse (viewModel.PlayVM.Teams.Contains (viewModel.Project.AwayTeam.Model));
+			Assert.IsFalse (viewModel.Play.Teams.Contains (viewModel.Project.AwayTeam.Model));
 			Assert.IsFalse (viewModel.TeamTagger.AwayTeam.Tagged);
 
 			viewModel.TeamTagger.AwayTeam.Tagged = true;
 
-			Assert.IsTrue (viewModel.PlayVM.Teams.Contains (viewModel.Project.AwayTeam.Model));
+			Assert.IsTrue (viewModel.Play.Teams.Contains (viewModel.Project.AwayTeam.Model));
 		}
 
 		[Test]
 		public void TestClickTeamRemoveFromEvent ()
 		{
-			Assert.IsTrue (viewModel.PlayVM.Teams.Contains (viewModel.Project.HomeTeam.Model));
+			Assert.IsTrue (viewModel.Play.Teams.Contains (viewModel.Project.HomeTeam.Model));
 			Assert.IsTrue (viewModel.TeamTagger.HomeTeam.Tagged);
 
 			viewModel.TeamTagger.HomeTeam.Tagged = false;
 
-			Assert.IsFalse (viewModel.PlayVM.Teams.Contains (viewModel.Project.HomeTeam.Model));
+			Assert.IsFalse (viewModel.Play.Teams.Contains (viewModel.Project.HomeTeam.Model));
 		}
 	}
 }

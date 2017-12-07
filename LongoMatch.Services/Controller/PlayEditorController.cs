@@ -42,7 +42,7 @@ namespace LongoMatch.Services.Controller
 		{
 			if (teamTagger.NeedsSync (e.PropertyName, "Collection_Selection", sender, teamTagger.HomeTeam) ||
 				teamTagger.NeedsSync (e.PropertyName, "Collection_Selection", sender, teamTagger.AwayTeam)) {
-				playEditorVM.PlayVM.Players.Reset (teamTagger.HomeTeam.Selection.Select (p => p.Model)
+				playEditorVM.Play.Players.Reset (teamTagger.HomeTeam.Selection.Select (p => p.Model)
 												   .Concat (teamTagger.AwayTeam.Selection.Select (p => p.Model)));
 			}
 
@@ -57,10 +57,10 @@ namespace LongoMatch.Services.Controller
 
 		void UpdatePlayTeams (LMTeamVM team)
 		{
-			if (team.Tagged && !playEditorVM.PlayVM.Teams.Contains (team.Model)) {
-				playEditorVM.PlayVM.Teams.Add (team.Model);
-			} else if (!team.Tagged && playEditorVM.PlayVM.Teams.Contains (team.Model)) {
-				playEditorVM.PlayVM.Teams.Remove (team.Model);
+			if (team.Tagged && !playEditorVM.Play.Teams.Contains (team.Model)) {
+				playEditorVM.Play.Teams.Add (team.Model);
+			} else if (!team.Tagged && playEditorVM.Play.Teams.Contains (team.Model)) {
+				playEditorVM.Play.Teams.Remove (team.Model);
 			}
 		}
 	}

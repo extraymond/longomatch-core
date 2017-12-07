@@ -115,7 +115,7 @@ namespace LongoMatch.Services
 			}
 			App.Current.EventsBroker.Publish (
 				new EventsDeletedEvent {
-					TimelineEventVMs = new List<TimelineEventVM> { LoadedPlayVM }
+					TimelineEvents = new List<TimelineEventVM> { LoadedPlayVM }
 				}
 			);
 		}
