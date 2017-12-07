@@ -65,7 +65,7 @@ namespace LongoMatch.Services.Controller
 
 			await App.Current.EventsBroker.Publish (
 				new EventEditedEvent {
-					TimelineEventVM = e.TimelineEvent
+					TimelineEvent = e.TimelineEvent
 				}
 			);
 		}

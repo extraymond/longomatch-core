@@ -202,7 +202,7 @@ namespace Tests.Integration
 
 			await App.Current.EventsBroker.Publish<EventsDeletedEvent> (
 				new EventsDeletedEvent {
-					TimelineEventVMs = events.Select (e => new TimelineEventVM () { Model = e })
+					TimelineEvents = events.Select (e => new TimelineEventVM () { Model = e })
 				}
 			);
 			Assert.AreEqual (3, p.Timeline.Count);

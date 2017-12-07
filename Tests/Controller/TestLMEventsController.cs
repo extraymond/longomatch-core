@@ -153,7 +153,7 @@ namespace Tests.Controller
 			var eventVMs = projectVM.Timeline.Model.Select (e => new TimelineEventVM () { Model = e });
 
 			App.Current.EventsBroker.Publish (new EventsDeletedEvent {
-				TimelineEventVMs = eventVMs
+				TimelineEvents = eventVMs
 			});
 
 			Assert.AreEqual (1, projectVM.Timeline.Model.Count);

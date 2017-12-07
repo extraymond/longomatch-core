@@ -404,7 +404,7 @@ namespace LongoMatch.Services.Controller
 
 		void HandleEventEdited (EventEditedEvent e)
 		{
-			if (e.TimelineEventVM.Model is SubstitutionEvent || e.TimelineEventVM.Model is LineupEvent) {
+			if (e.TimelineEvent.Model is SubstitutionEvent || e.TimelineEvent.Model is LineupEvent) {
 				UpdatePlayersPosition ();
 			}
 		}
